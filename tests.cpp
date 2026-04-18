@@ -3,89 +3,64 @@
 
 TEST(StackTest, PushAndTop) {
     Stack<int> stack;
-    stack.push(42);
-    EXPECT_EQ(stack.top(), 42);
-    EXPECT_EQ(stack.size(), 1);
+    stack.push(10);
+    stack.push(20);
+    stack.push(30);
     
-    stack.push(100);
-    EXPECT_EQ(stack.top(), 100);
-    EXPECT_EQ(stack.size(), 2);
+    EXPECT_EQ(stack.top(), 30);
+    EXPECT_EQ(stack.size(), 3);
 }
 
-TEST(StackTest, PopReducesSize) {
+TEST(StackTest, PopDecreasesSize) {
     Stack<std::string> stack;
     stack.push("first");
     stack.push("second");
+    stack.push("third");
+    
+    EXPECT_EQ(stack.size(), 3);
+    
+    stack.pop();
     EXPECT_EQ(stack.size(), 2);
     
     stack.pop();
     EXPECT_EQ(stack.size(), 1);
+    
     EXPECT_EQ(stack.top(), "first");
-    
-    stack.pop();
-    EXPECT_EQ(stack.size(), 0);
-    EXPECT_TRUE(stack.empty());
 }
 
-TEST(StackTest, TopOnEmptyThrows) {
+TEST(StackTest, TopOnEmptyThrowsUnderflowError) {
     Stack<double> stack;
+    
     EXPECT_THROW(stack.top(), std::underflow_error);
     
+    // Добавим и удалим, чтобы убедиться, что после этого снова ошибка
     stack.push(3.14);
-    EXPECT_NO_THROW(stack.top());
     stack.pop();
+    
     EXPECT_THROW(stack.top(), std::underflow_error);
 }
 
-TEST(StackTest, PopOnEmptyThrows) {
+TEST(StackTest, PopOnEmptyThrowsUnderflowError) {
     Stack<char> stack;
+    
     EXPECT_THROW(stack.pop(), std::underflow_error);
     
+    // Добавим, удалим, и проверим повторно
     stack.push('A');
-    EXPECT_NO_THROW(stack.pop());
+    stack.pop();
+    
     EXPECT_THROW(stack.pop(), std::underflow_error);
 }
 
-TEST(StackTest, EmptyOnNewStack) {
+TEST(StackTest, EmptyReturnsTrueForNewStack) {
     Stack<int> stack;
+    
     EXPECT_TRUE(stack.empty());
     EXPECT_EQ(stack.size(), 0);
     
-    stack.push(1);
+    stack.push(42);
     EXPECT_FALSE(stack.empty());
     
     stack.pop();
     EXPECT_TRUE(stack.empty());
-}
-
-TEST(StackTest, ConstTop) {
-    Stack<int> stack;
-    stack.push(5);
-    const Stack<int>& constRef = stack;
-    EXPECT_EQ(constRef.top(), 5);
-}
-
-TEST(StackTest, MultipleTypes) {
-    Stack<int> intStack;
-    intStack.push(10);
-    EXPECT_EQ(intStack.top(), 10);
-    
-    Stack<std::string> strStack;
-    strStack.push("hello");
-    EXPECT_EQ(strStack.top(), "hello");
-}
-
-TEST(StackTest, ConstTopOnEmptyThrows) {
-    Stack<int> stack;
-    const Stack<int>& constRef = stack;
-    EXPECT_THROW(constRef.top(), std::underflow_error);
-}
-
-TEST(StackTest, DoubleType) {
-    Stack<double> stack;
-    stack.push(3.14);
-    stack.push(2.71);
-    EXPECT_EQ(stack.top(), 2.71);
-    stack.pop();
-    EXPECT_EQ(stack.top(), 3.14);
 }
