@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtest-dev cmake g++ lcov gcovr
+    
+    - name: Build GTest
+      run: |
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp lib/*.a /usr/lib
+    
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage" -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+    
+    - name: Build tests
+      run: cmake --build build
+    
+    - name: Run tests
+      run: ./build/stack_tests
+    
+    - name: Generate coverage
+      run: |
+        cd build
+        gcovr --root .. --html --html-details -o coverage.html
+        gcovr --root .. --xml -o coverage.xml
+    
+    - name: Check coverage (>=90%)
+      run: |
+        cd build
+        COVERAGE=$(gcovr --root .. --print-summary | grep lines | awk '{print $2}' | sed 's/%//')
+        echo "Coverage: $COVERAGE%"
+        if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+          echo "Coverage $COVERAGE% is below 90%"
+          exit 1
+        fi
+    
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: build/coverage.html
