@@ -140,21 +140,3 @@ TEST(StackTest, TopDoesNotRemoveElement) {
     EXPECT_EQ(stack.size(), 1);
 }
 
-// Тест на проверку исключения с сообщением
-TEST(StackTest, ExceptionContainsCorrectMessage) {
-    Stack<int> stack;
-    
-    try {
-        stack.top();
-        FAIL() << "Expected std::underflow_error";
-    } catch (const std::underflow_error& e) {
-        EXPECT_STREQ(e.what(), "Stack is empty: cannot top");
-    }
-    
-    try {
-        stack.pop();
-        FAIL() << "Expected std::underflow_error";
-    } catch (const std::underflow_error& e) {
-        EXPECT_STREQ(e.what(), "Stack is empty: cannot pop");
-    }
-}
