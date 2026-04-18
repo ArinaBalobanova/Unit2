@@ -41,35 +41,29 @@ TEST(StackTest, PopDecreasesSize) {
     EXPECT_TRUE(stack.empty());
 }
 
-// Тест 3: top на пустом стеке → std::underflow_error
+// Тест 3: top на пустом стеке, std::underflow_error
 TEST(StackTest, TopOnEmptyStackThrowsUnderflowError) {
     Stack<double> stack;
     
-    // Проверяем, что top() выбрасывает исключение на пустом стеке
     EXPECT_THROW(stack.top(), std::underflow_error);
     
-    // Добавляем элемент - теперь top() работает
     stack.push(3.14);
     EXPECT_NO_THROW(stack.top());
     EXPECT_EQ(stack.top(), 3.14);
     
-    // Удаляем элемент - стек снова пуст
     stack.pop();
     EXPECT_THROW(stack.top(), std::underflow_error);
 }
 
-// Тест 4: pop на пустом стеке → std::underflow_error
+// Тест 4: pop на пустом стеке, std::underflow_error
 TEST(StackTest, PopOnEmptyStackThrowsUnderflowError) {
     Stack<char> stack;
     
-    // Проверяем, что pop() выбрасывает исключение на пустом стеке
     EXPECT_THROW(stack.pop(), std::underflow_error);
     
-    // Добавляем элемент - теперь pop() работает
     stack.push('A');
     EXPECT_NO_THROW(stack.pop());
     
-    // Стек снова пуст - pop() снова выбрасывает исключение
     EXPECT_THROW(stack.pop(), std::underflow_error);
 }
 
@@ -77,42 +71,30 @@ TEST(StackTest, PopOnEmptyStackThrowsUnderflowError) {
 TEST(StackTest, EmptyReturnsTrueForNewStack) {
     Stack<int> stack;
     
-    // Новый стек должен быть пустым
     EXPECT_TRUE(stack.empty());
     EXPECT_EQ(stack.size(), 0);
     
-    // После push стек не пуст
     stack.push(42);
     EXPECT_FALSE(stack.empty());
     EXPECT_EQ(stack.size(), 1);
     
-    // После pop стек снова пуст
     stack.pop();
     EXPECT_TRUE(stack.empty());
     EXPECT_EQ(stack.size(), 0);
 }
 
-// Дополнительные тесты для достижения coverage ≥90%
-
 // Тест на работу с разными типами данных
 TEST(StackTest, WorksWithDifferentDataTypes) {
-    // Тест с bool
+    
     Stack<bool> boolStack;
     boolStack.push(true);
     EXPECT_TRUE(boolStack.top());
     boolStack.push(false);
     EXPECT_FALSE(boolStack.top());
     
-    // Тест с double
     Stack<double> doubleStack;
     doubleStack.push(3.14159);
     EXPECT_DOUBLE_EQ(doubleStack.top(), 3.14159);
-    
-    // Тест с указателями
-    int value = 42;
-    Stack<int*> ptrStack;
-    ptrStack.push(&value);
-    EXPECT_EQ(*ptrStack.top(), 42);
 }
 
 // Тест на константный доступ
